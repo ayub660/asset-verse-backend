@@ -1,3 +1,4 @@
+// index.js
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
@@ -13,23 +14,18 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// -----------------------------
 // MongoDB connection
+// -----------------------------
 const dbUser = "asset-verse";
-
 const dbPass = "wESmJsfCwH3k14os";
 const mongoURI = `mongodb+srv://${dbUser}:${dbPass}@cluster0.wpjlndq.mongodb.net/assetverse?retryWrites=true&w=majority`;
 
 mongoose.connect(mongoURI)
-    .then(() => console.log(" MongoDB connected successfully!"))
-    .catch(err => console.error("MongoDB connection failed:", err.message));
+    .then(() => console.log("✅ MongoDB connected successfully!"))
+    .catch(err => console.error("❌ MongoDB connection failed:", err.message));
 
-// Test route
-app.get("/", (req, res) => {
-    res.send("AssetVerse Server Running!");
-});
-
-
-
+// -----------------------------
 // User Schema
 // -----------------------------
 const userSchema = new mongoose.Schema({
@@ -43,7 +39,7 @@ const userSchema = new mongoose.Schema({
 const User = mongoose.model("User", userSchema);
 
 // -----------------------------
-// Routes
+// Auth Routes
 // -----------------------------
 
 // Register
@@ -78,7 +74,7 @@ app.post("/api/auth/login", async (req, res) => {
     }
 });
 
-// JWT Middleware (Optional for future routes)
+// JWT Middleware
 const verifyToken = (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) return res.status(401).json({ message: "No token provided" });
@@ -91,11 +87,28 @@ const verifyToken = (req, res, next) => {
     });
 };
 
+// Get current logged-in user (Profile)
+app.get("/api/users/me", verifyToken, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select("-password");
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 // Example Protected Route
 app.get("/api/protected", verifyToken, (req, res) => {
     res.json({ message: `Hello ${req.user.id}, you are ${req.user.role}` });
 });
 
+// Test route
+app.get("/", (req, res) => {
+    res.send("AssetVerse Server Running!");
+});
+
+// -----------------------------
 // Start server
+// -----------------------------
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
