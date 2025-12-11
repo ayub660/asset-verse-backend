@@ -18,8 +18,8 @@ const dbPass = "wESmJsfCwH3k14os";
 const mongoURI = `mongodb+srv://${dbUser}:${dbPass}@cluster0.wpjlndq.mongodb.net/assetverse?retryWrites=true&w=majority`;
 
 mongoose.connect(mongoURI)
-    .then(() => console.log("✅ MongoDB connected successfully!"))
-    .catch(err => console.error("❌ MongoDB connection failed:", err.message));
+    .then(() => console.log(" MongoDB connected successfully!"))
+    .catch(err => console.error("MongoDB connection failed:", err.message));
 
 // Test route
 app.get("/", (req, res) => {
