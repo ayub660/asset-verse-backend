@@ -14,6 +14,7 @@ app.use(express.json());
 
 // MongoDB connection
 const dbUser = "asset-verse";
+
 const dbPass = "wESmJsfCwH3k14os";
 const mongoURI = `mongodb+srv://${dbUser}:${dbPass}@cluster0.wpjlndq.mongodb.net/assetverse?retryWrites=true&w=majority`;
 
